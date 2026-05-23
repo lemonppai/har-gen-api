@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import cfonts from 'cfonts';
 import { generate } from '../index.js';
 
-cfonts.say('Har Api', {
+cfonts.say('Har Gen Api', {
   font: 'simple',
   // colors: ['#409EFF']
 });

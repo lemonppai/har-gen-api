@@ -1,16 +1,16 @@
-# har-api
+# har-gen-mock
 > 浏览器HAR转成接口文件
 
 ## 使用
 
 ### 全局安装
 ```bash
-npm install -g har-api
+npm install -g har-gen-mock
 ```
 
 ### 命令行使用
 ```bash
-har-api --input mock/har.local --output mock/api.local --baseURL /api --overwrite
+har-gen-mock --input mock/har.local --output mock/api.local --baseURL /api --overwrite
 ```
 
 ### 参数说明：
