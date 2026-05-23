@@ -13,8 +13,8 @@ npm install -g har-to-api
 har-to-api --input mock/har.local --output mock/api.local --baseURL /api --overwrite
 ```
 
-参数说明：
-* input: 输入HAR文件路径
-* output: 输出接口文件路径
-* baseURL: 接口基础URL
-* overwrite: 是否覆盖已存在的接口文件
+### 参数说明：
+* input: 输入路径，默认为 mock/har.local (default: "mock/har.local")
+* output: 输出路径，默认为 mock/api.local (default: "mock/api.local")
+* baseURL: baseURL路径 (default: "")
+* overwrite: 是否覆盖已存在的文件 (default: false)
