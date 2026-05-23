@@ -18,3 +18,18 @@ har-gen-api --input mock/har.local --output mock/api.local --baseURL /api --over
 * output: 输出路径，默认为 mock/api.local (default: "mock/api.local")
 * baseURL: baseURL路径 (default: "")
 * overwrite: 是否覆盖已存在的文件 (default: false)
+
+### vite配置
+```js
+import { mockServer } from 'har-gen-api/vite';
+
+export default defineConfig({
+  plugins: [
+    mockServer({
+      mockPath: 'mock',
+      baseURL: '/api',
+      enabled: true
+    })
+  ]
+})
+```
