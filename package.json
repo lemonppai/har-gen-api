@@ -13,9 +13,6 @@
     },
     "./vite": {
       "import": "./mockServer.js"
-    },
-    "./vite/esm": {
-      "import": "./mockServer.mjs"
     }
   },
   "bin": {
