@@ -5,8 +5,8 @@ import { program } from 'commander';
 
 // 解析命令行参数
 program
-  .option('-i, --input <path>', '输入路径，默认为 mock/har.local', 'mock/har.local')
-  .option('-o, --output <path>', '输出路径，默认为 mock/api.local', 'mock/api.local')
+  .option('-i, --input <path>', '输入路径，默认为 mock/har', 'mock/har')
+  .option('-o, --output <path>', '输出路径，默认为 mock', 'mock')
   // baseURL路径
   .option('-b, --baseURL <path>', 'baseURL路径', '')
   .option('-w, --overwrite', '是否覆盖已存在的文件', false)

@@ -1,12 +1,17 @@
 {
   "name": "har-gen-api",
   "type": "module",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "license": "MIT",
+  "scripts": {
+    "start": "node bin/cli.js",
+    "build": "esbuild mockServer.js --format=esm --outfile=dist/mockServer.mjs && esbuild mockServer.js --format=cjs --outfile=dist/mockServer.cjs"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lemonppai/har-gen-api.git"
   },
+  "files": ["index.js", "bin", "dist"],
   "keywords": [
     "har",
     "mock",
@@ -18,7 +23,8 @@
       "import": "./index.js"
     },
     "./vite": {
-      "import": "./mockServer.js"
+      "import": "./dist/mockServer.mjs",
+      "require": "./dist/mockServer.cjs"
     }
   },
   "bin": {
@@ -31,5 +37,8 @@
     "json5": "^2.2.3",
     "lodash": "^4.18.1",
     "mockjs": "^1.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
   }
 }
