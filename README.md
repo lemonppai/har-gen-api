@@ -22,7 +22,7 @@ yarn add har-gen-api
 npx har-gen-api --input mock/har --output mock --baseURL /api --overwrite
 ```
 
-### 参数说明
+#### 参数说明
 * input: 输入路径，默认为 `mock/har` (default: "mock/har.local")
 * output: 输出路径，默认为 `mock` (default: "mock/api.local")
 * baseURL: baseURL路径，注意 **windows** 系统需要前面多加`/`，如`//api` (default: "")
@@ -35,10 +35,15 @@ import { mockServer } from 'har-gen-api/vite';
 export default defineConfig({
   plugins: [
     mockServer({
-      mockPath: 'mock',
+      include: 'mock',
       baseURL: '/api',
       enabled: true
     })
   ]
 })
 ```
+
+#### 参数说明
+* include: 匹配路径
+* baseURL: 接口baseURL路径
+* enabled: 是否启用

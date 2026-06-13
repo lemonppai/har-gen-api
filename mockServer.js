@@ -3,7 +3,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import JSON5 from 'json5';
 
-export const mockServer = ({ mockPath = 'mock', baseURL = '', enabled = false } = {}) => {
+export const mockServer = ({ include = 'mock', baseURL = '', enabled = false } = {}) => {
   return {
     name: 'mock-server',
     configureServer(server) {
@@ -17,9 +17,9 @@ export const mockServer = ({ mockPath = 'mock', baseURL = '', enabled = false } 
 
             // console.log('路径', pathname);
 
-            // console.log(`${mockPath}${pathname}.${req.method.toLowerCase()}`)
+            // console.log(`${include}${pathname}.${req.method.toLowerCase()}`)
 
-            fs.readFile(`${mockPath}${pathname}.${req.method.toLowerCase()}`, (err, data) => {
+            fs.readFile(`${include}${pathname}.${req.method.toLowerCase()}`, (err, data) => {
               if (err) {
                 next();
                 return;
