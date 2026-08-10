@@ -9,8 +9,8 @@ export const mockServer = ({ include = 'mock', baseURL = '', enabled = false } =
     configureServer(server) {
       if (enabled) {
         server.middlewares.use((req, res, next) => {
-          const url = new URL(req.url, `http://${req.headers.host}`);
-          let pathname = url.pathname;
+          const url: URL = new URL(req.url, `http://${req.headers.host}`);
+          let pathname: string = url.pathname;
 
           if (pathname.startsWith(baseURL)) {
             pathname = pathname.replace(new RegExp(`^${baseURL}`), '');

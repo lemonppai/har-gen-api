@@ -2,7 +2,7 @@
 
 import chalk from 'chalk';
 import cfonts from 'cfonts';
-import { generate } from '../index.js';
+import { generate } from '../dist/index.js';
 
 cfonts.say('Har Gen Api', {
   font: 'simple',
