@@ -22,7 +22,8 @@ const { input, output, overwrite, baseURL } = program.opts(); */
  * 选择文件
  */
 const selectFile = (): string | void => {
-  const command = `powershell.exe -Command "& {Add-Type -AssemblyName System.Windows.Forms; $FileDialog = New-Object System.Windows.Forms.OpenFileDialog; $result = $FileDialog.ShowDialog(); if ($result -eq 'OK') { Write-Output $FileDialog.FileName }}"`;
+  const command = `powershell.exe -NoProfile -NonInteractive -Command "& {Add-Type -AssemblyName System.Windows.Forms; $FileDialog = New-Object System.Windows.Forms.OpenFileDialog; $FileDialog.Filter = 'HAR 文件 (*.har)|*.har|所有文件 (*.*)|*.*'; $FileDialog.Title = '请选择 HAR 文件'; $result = $FileDialog.ShowDialog(); if ($result -eq 'OK') { Write-Output $FileDialog.FileName }}"`;
+
   try {
     const filePath = execSync(command, { encoding: 'utf8' }).trim();
     return filePath;
@@ -36,8 +37,6 @@ const generate = async (): Promise<void> => {
   // console.log('输出路径：', output);
   // console.log('baseURL路径：', baseURL);
   // console.log('是否覆盖已存在的文件：', overwrite);
-
-  console.log('请选择要处理的 HAR 文件');
 
   const input = selectFile();
 
@@ -53,12 +52,12 @@ const generate = async (): Promise<void> => {
       type: 'input',
       name: 'output',
       message: '生成路径',
-      validate(s: string) {
+      /* validate(s: string) {
         if (/^https?:\/\/([\w.-]+)(:\d+)?\/[\w.\-~]+\/[\w.\-~]+(\.git)?(\/)?$/.test(s.trim())) {
           return true;
         }
         return '格式不正确';
-      }
+      } */
     },
     {
       type: 'input',
@@ -163,3 +162,8 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
 }
 
 export { generate };
+
+// 判断是否为主模块
+if (process.argv[1] && import.meta.filename === process.argv[1]) {
+  generate();
+}
