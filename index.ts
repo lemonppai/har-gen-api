@@ -1,23 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import JSON5 from 'json5';
-import { program } from 'commander';
 import { execSync } from 'child_process';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
-
-// 解析命令行参数
-/* program
-  .option('-i, --input <path>', '输入路径，默认为 mock/har', 'mock/har')
-  .option('-o, --output <path>', '输出路径，默认为 mock', 'mock')
-  // baseURL路径
-  .option('-b, --baseURL <path>', 'baseURL路径', '')
-  .option('-w, --overwrite', '是否覆盖已存在的文件', false)
-  .parse(process.argv);
-
-program.parse();
-
-const { input, output, overwrite, baseURL } = program.opts(); */
 
 /**
  * 选择文件
@@ -34,11 +20,6 @@ const selectFile = (): string | void => {
 };
 
 const generate = async (): Promise<void> => {
-  // console.log('输入路径：', input);
-  // console.log('输出路径：', output);
-  // console.log('baseURL路径：', baseURL);
-  // console.log('是否覆盖已存在的文件：', overwrite);
-
   const input = selectFile();
 
   if (!input) {
@@ -147,7 +128,7 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
         }
 
         if (!overwrite && d.hasOwnProperty(urlObj.search)) {
-          console.log(`已存在相同的路径: ${urlObj.pathname}${urlObj.search}`);
+          console.log(`已存在相同的路径: ${chalk.gray(urlObj.pathname + urlObj.search)}`);
           return;
         }
 
