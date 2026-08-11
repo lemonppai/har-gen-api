@@ -45,26 +45,33 @@ const generate = async (): Promise<void> => {
     return;
   }
 
-  console.log('选择的文件路径:', input);
+  if (!input.endsWith('.har')) {
+    console.error('请选择 HAR 文件');
+    return;
+  }
+
+  console.log('HAR 文件路径:', input);
 
   const { output, baseURL, overwrite } = await inquirer.prompt([
     {
       type: 'input',
       name: 'output',
       message: '生成路径',
-      /* validate(s: string) {
-        if (/^https?:\/\/([\w.-]+)(:\d+)?\/[\w.\-~]+\/[\w.\-~]+(\.git)?(\/)?$/.test(s.trim())) {
+      default: 'mock',
+      validate(s: string) {
+        if (/^(?!\/)[^\0]+$/.test(s.trim())) {
           return true;
         }
         return '格式不正确';
-      } */
+      }
     },
     {
       type: 'input',
       name: 'baseURL',
       message: 'baseURL路径',
+      default: '/api',
       validate(s: string) {
-        if (/^[\w-]+$/.test(s.trim())) {
+        if (/^\/[^\0]+$/.test(s.trim())) {
           return true;
         }
         return '格式不正确';
