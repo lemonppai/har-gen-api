@@ -2,24 +2,32 @@ import Mock from 'mockjs';
 import fs from 'fs';
 import _ from 'lodash';
 import JSON5 from 'json5';
+import chalk from 'chalk';
 
-export const mockServer = ({ include = 'mock', baseURL = '', enabled = false } = {}) => {
+export const mockServer = ({
+  include = 'mock',
+  baseURL = '',
+  enabled = false,
+  debug = false
+} = {}) => {
   return {
     name: 'mock-server',
-    configureServer(server) {
+    configureServer(server: any) {
       if (enabled) {
-        server.middlewares.use((req, res, next) => {
+        server.middlewares.use((req: any, res: any, next: Function) => {
           const url: URL = new URL(req.url, `http://${req.headers.host}`);
           let pathname: string = url.pathname;
 
           if (pathname.startsWith(baseURL)) {
             pathname = pathname.replace(new RegExp(`^${baseURL}`), '');
 
-            // console.log('路径', pathname);
+            if (debug) {
+              console.log(`${chalk.blue(`[${req.method}]`)} ${url.pathname}`);
+            }
 
             // console.log(`${include}${pathname}.${req.method.toLowerCase()}`)
 
-            fs.readFile(`${include}${pathname}.${req.method.toLowerCase()}`, (err, data) => {
+            fs.readFile(`${include}${pathname}.${req.method.toLowerCase()}`, (err: NodeJS.ErrnoException | null, fileData: Buffer) => {
               if (err) {
                 next();
                 return;
@@ -29,7 +37,7 @@ export const mockServer = ({ include = 'mock', baseURL = '', enabled = false } =
               res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
               try {
-                data = JSON5.parse(data);
+                let data: any = JSON5.parse(fileData.toString());
                 const keys = Object.keys(data).filter(key => key.startsWith('?') || key === '');
 
                 keys.sort((a, b) => {
@@ -68,7 +76,7 @@ export const mockServer = ({ include = 'mock', baseURL = '', enabled = false } =
           }
         });
 
-        console.log('Mock server is running...');
+        console.log(`${chalk.green('✔')} Mock server is running...`);
       }
     },
   };
