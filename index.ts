@@ -4,6 +4,7 @@ import JSON5 from 'json5';
 import { program } from 'commander';
 import { execSync } from 'child_process';
 import inquirer from 'inquirer';
+import chalk from 'chalk';
 
 // 解析命令行参数
 /* program
@@ -41,16 +42,11 @@ const generate = async (): Promise<void> => {
   const input = selectFile();
 
   if (!input) {
-    console.log('未选择文件');
+    console.log(`${chalk.red('✖')} 未选择文件`);
     return;
   }
 
-  if (!input.endsWith('.har')) {
-    console.error('请选择 HAR 文件');
-    return;
-  }
-
-  console.log('HAR 文件路径:', input);
+  console.log(`${chalk.green('✔')} HAR 文件路径 ${chalk.cyan(input)}`);
 
   const { output, baseURL, overwrite } = await inquirer.prompt([
     {
@@ -112,7 +108,8 @@ const generate = async (): Promise<void> => {
     });
   }
 
-  console.log('生成了', count, '条 mock 数据');
+  // console.log('生成了', count, '条 mock 数据');
+  console.log(`生成了 ${chalk.green(count)} 条 mock 数据`);
 }
 
 const processHarFile = (filePath: string, output: string, baseURL: string, overwrite: boolean): number => {
