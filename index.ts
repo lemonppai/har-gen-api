@@ -89,8 +89,7 @@ const generate = async (): Promise<void> => {
     });
   }
 
-  // console.log('生成了', count, '条 mock 数据');
-  console.log(`生成了 ${chalk.green(count)} 条 mock 数据`);
+  console.log(`生成了 ${chalk.green(count)} 条 ${chalk.blue.bold('mock')} 数据`);
 }
 
 const processHarFile = (filePath: string, output: string, baseURL: string, overwrite: boolean): number => {
@@ -128,7 +127,7 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
         }
 
         if (!overwrite && d.hasOwnProperty(urlObj.search)) {
-          console.log(`已存在相同的路径: ${chalk.gray(urlObj.pathname + urlObj.search)}`);
+          console.log(`${chalk.yellow('⚠')} 已存在相同的路径 ${chalk.gray(urlObj.pathname + urlObj.search)}`);
           return;
         }
 
