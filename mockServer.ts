@@ -20,14 +20,13 @@ export const mockServer = ({
 
           if (pathname.startsWith(baseURL)) {
             pathname = pathname.replace(new RegExp(`^${baseURL}`), '');
+            const filePath: string = `${include}/${pathname}.${req.method.toLowerCase()}`.replace(/\/+/g, '/');
 
             if (debug) {
               console.log(`${chalk.cyan.bold('[har-gen-api]')} ${chalk.blue.bold(`[${req.method}]`)} ${chalk.gray(url.pathname)}`);
             }
 
-            // console.log(`${include}${pathname}.${req.method.toLowerCase()}`)
-
-            fs.readFile(`${include}${pathname}.${req.method.toLowerCase()}`, (err: NodeJS.ErrnoException | null, fileData: Buffer) => {
+            fs.readFile(filePath, (err: NodeJS.ErrnoException | null, fileData: Buffer) => {
               if (err) {
                 next();
                 return;
