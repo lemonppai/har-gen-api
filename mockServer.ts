@@ -22,7 +22,7 @@ export const mockServer = ({
             pathname = pathname.replace(new RegExp(`^${baseURL}`), '');
 
             if (debug) {
-              console.log(`${chalk.blue(`[${req.method}]`)} ${url.pathname}`);
+              console.log(`${chalk.cyan.bold('[har-gen-api]')} ${chalk.blue.bold(`[${req.method}]`)} ${chalk.gray(url.pathname)}`);
             }
 
             // console.log(`${include}${pathname}.${req.method.toLowerCase()}`)
@@ -76,7 +76,7 @@ export const mockServer = ({
           }
         });
 
-        console.log(`${chalk.green('✔')} Mock server is running...`);
+        console.log(`${chalk.cyan.bold('[har-gen-api]')} ✨ ${chalk.green('Mock server is running...')}`);
       }
     },
   };

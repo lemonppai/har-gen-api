@@ -1,7 +1,7 @@
 {
   "name": "har-gen-api",
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.8",
   "license": "MIT",
   "scripts": {
     "start": "node bin/cli.js",
@@ -12,7 +12,8 @@
     "url": "git+https://github.com/lemonppai/har-gen-api.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "mockServer.d.ts"
   ],
   "keywords": [
     "har",
@@ -22,9 +23,9 @@
   ],
   "exports": {
     "./vite": {
+      "types": "./mockServer.d.ts",
       "import": "./dist/mockServer.mjs",
-      "require": "./dist/mockServer.cjs",
-      "types": "./mockServer.d.ts"
+      "require": "./dist/mockServer.cjs"
     }
   },
   "bin": {

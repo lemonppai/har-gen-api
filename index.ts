@@ -108,7 +108,7 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
     if (item._resourceType == 'xhr' && item.response.status == 200 && item.response.headers.some((item: any) => item.name.toLowerCase() == 'content-type' && item.value.includes('application/json'))) {
       const urlObj: URL = new URL(item.request.url);
       // console.log(url)
-      const url: string = urlObj.pathname.replace(baseURL, '');
+      const url: string = urlObj.pathname.replace(new RegExp(`^${baseURL}`), '');
       const method: string = item.request.method.toLowerCase();
       let resData = {
         [urlObj.search]: item.response.content.text
