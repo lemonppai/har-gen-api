@@ -1,3 +1,4 @@
+import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import JSON5 from 'json5';
@@ -9,13 +10,33 @@ import chalk from 'chalk';
  * 选择文件
  */
 const selectFile = (): string | void => {
-  const command = `powershell.exe -NoProfile -NonInteractive -Command "& {Add-Type -AssemblyName System.Windows.Forms; $FileDialog = New-Object System.Windows.Forms.OpenFileDialog; $FileDialog.Filter = 'HAR 文件 (*.har)|*.har|所有文件 (*.*)|*.*'; $FileDialog.Title = '请选择 HAR 文件'; $result = $FileDialog.ShowDialog(); if ($result -eq 'OK') { Write-Output $FileDialog.FileName }}"`;
+  const platform = os.platform();
+  let command;
+
+  switch (platform) {
+    case 'win32': // Windows
+      command = `powershell.exe -NoProfile -NonInteractive -Command "& {Add-Type -AssemblyName System.Windows.Forms; $FileDialog = New-Object System.Windows.Forms.OpenFileDialog; $FileDialog.Filter = 'HAR 文件 (*.har)|*.har|所有文件 (*.*)|*.*'; $FileDialog.Title = '请选择 HAR 文件'; $result = $FileDialog.ShowDialog(); if ($result -eq 'OK') { Write-Output $FileDialog.FileName }}"`;
+      break;
+
+    case 'darwin': // macOS
+      command = `osascript -e 'tell application "System Events" to set harFile to choose file with prompt "请选择 HAR 文件" of type {"har", "public.data"} as alias' -e 'set thePath to POSIX path of harFile' -e 'return thePath'`;
+      break;
+
+    case 'linux': // Linux
+      // 优先使用 zenity，若不存在可降级到 kdialog 或 xdg-open（但 xdg-open 不能返回路径）
+      command = `zenity --file-selection --title="请选择 HAR 文件" --file-filter="HAR 文件 *.har" 2>/dev/null || kdialog --getopenfilename . "*.har" --title "请选择 HAR 文件" 2>/dev/null`;
+      break;
+
+    default:
+      console.error(`${chalk.red('✖')} 不支持的操作系统: ${platform}`);
+      return;
+  }
 
   try {
     const filePath = execSync(command, { encoding: 'utf8' }).trim();
     return filePath;
   } catch (err) {
-    console.error('未选择文件或出错:', err);
+    console.error(`${chalk.red('✖')} 未选择文件或出错:`, err);
   }
 };
 
@@ -23,7 +44,7 @@ const generate = async (): Promise<void> => {
   const input = selectFile();
 
   if (!input) {
-    console.log(`${chalk.red('✖')} 未选择文件`);
+    console.log(`${chalk.yellow('⚠')} 未选择文件`);
     return;
   }
 
@@ -69,7 +90,7 @@ const generate = async (): Promise<void> => {
 
   if (!fs.existsSync(input)) {
     // console.error(`File not found: ${input}`);
-    console.error(`文件或目录不存在：${input}`);
+    console.error(`${chalk.red('✖')} 文件或目录不存在：${input}`);
     process.exit(1);
   }
 
@@ -99,7 +120,7 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
   const data: any = JSON.parse(fileStr);
 
   if (!data.log || !data.log.entries) {
-    console.error('Invalid HAR file format');
+    console.error(`${chalk.red('✖')} Invalid HAR file format`);
     return 0;
   }
 
