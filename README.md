@@ -8,7 +8,7 @@
 ## 特性
 
 - 🚀 从 Chrome DevTools 导出的 `.har` 文件中一键提取请求/响应数据
-- 📦 自动生成符合 RESTful 风格的 Mock 接口文件（JSON / JS）
+- 📦 自动生成 Mock 接口文件，文件所在路径是接口路径和请求方式组合
 - ⚡ 内置 Vite 插件，开发环境下实时拦截请求并返回 Mock 数据
 - 🧩 支持自定义 `baseURL`、输出目录、是否覆盖已有文件
 - 🔍 Debug 模式可打印接口调用日志，方便调试
@@ -20,7 +20,7 @@
 ```bash
 npm install har-gen-api --save-dev
 # 或
-yarn add har-gen-api -D
+yarn add har-gen-api --dev
 ```
 
 ---
@@ -46,13 +46,13 @@ npx har-gen-api
 然后根据提示完成交互：
 
 ```
-? 请选择 HAR 文件
+? 请选择 HAR 文件（弹出选择文件窗口）
 
 ? 请输入生成的接口文件目录 (默认: mock)
 
 ? 请输入 baseURL 路径 (默认: /api)
 
-? 是否覆盖已存在的文件
+? 是否覆盖已存在的文件 (y/N)
 ```
 
 执行后会在指定目录下生成对应的接口文件，例如：
@@ -77,7 +77,7 @@ export default defineConfig({
     mockServer({
       include: 'mock',           // 扫描的目录，存放生成的接口文件
       baseURL: '/api',           // 需要拦截的接口前缀
-      enabled: true,             // 是否启用 Mock（生产环境建议关闭）
+      enabled: true,             // 是否启用 Mock 服务
       debug: true                // 是否打印请求日志
     })
   ]
