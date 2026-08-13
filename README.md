@@ -99,9 +99,6 @@ export default defineConfig({
 
 生成的接口文件可以是 `.get` 或 `.post` 文件，分别对应 GET 和 POST 请求。
 
-- **JSON 文件**：直接返回静态数据，适合简单场景。
-- **JS 文件**：导出一个函数，可动态处理请求并返回响应，适合需要模拟不同状态码或延迟的场景。
-
 **示例：`getUser.get`**
 
 ```json
