@@ -5,6 +5,7 @@ import JSON5 from 'json5';
 import { execSync } from 'child_process';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
+import logSymbols from 'log-symbols';
 
 /**
  * 选择文件
@@ -28,7 +29,7 @@ const selectFile = (): string | void => {
       break;
 
     default:
-      console.error(`${chalk.red('✖')} 不支持的操作系统: ${platform}`);
+      console.error(`${chalk.red(logSymbols.error)} 不支持的操作系统: ${platform}`);
       return;
   }
 
@@ -36,7 +37,7 @@ const selectFile = (): string | void => {
     const filePath = execSync(command, { encoding: 'utf8' }).trim();
     return filePath;
   } catch (err) {
-    console.error(`${chalk.red('✖')} 未选择文件或出错:`, err);
+    console.error(`${chalk.red(logSymbols.error)} 未选择文件或出错:`, err);
   }
 };
 
@@ -44,11 +45,11 @@ const generate = async (): Promise<void> => {
   const input = selectFile();
 
   if (!input) {
-    console.log(`${chalk.yellow('⚠')} 未选择文件`);
+    console.log(`${chalk.yellow(logSymbols.warning)} 未选择文件`);
     return;
   }
 
-  console.log(`${chalk.green('✔')} HAR 文件路径 ${chalk.cyan(input)}`);
+  console.log(`${chalk.green(logSymbols.success)} HAR 文件路径 ${chalk.cyan(input)}`);
 
   const { output, baseURL, overwrite } = await inquirer.prompt([
     {
@@ -76,13 +77,10 @@ const generate = async (): Promise<void> => {
       }
     },
     {
-      type: 'select',
+      type: 'confirm',
       name: 'overwrite',
       message: '是否覆盖已存在的文件',
-      choices: [
-        { name: '是', value: true },
-        { name: '否', value: false }
-      ],
+      default: false
     },
   ]);
 
@@ -90,7 +88,7 @@ const generate = async (): Promise<void> => {
 
   if (!fs.existsSync(input)) {
     // console.error(`File not found: ${input}`);
-    console.error(`${chalk.red('✖')} 文件或目录不存在：${input}`);
+    console.error(`${chalk.red(logSymbols.error)} 文件或目录不存在：${input}`);
     process.exit(1);
   }
 
@@ -120,7 +118,7 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
   const data: any = JSON.parse(fileStr);
 
   if (!data.log || !data.log.entries) {
-    console.error(`${chalk.red('✖')} Invalid HAR file format`);
+    console.error(`${chalk.red(logSymbols.error)} Invalid HAR file format`);
     return 0;
   }
 
@@ -148,7 +146,7 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
         }
 
         if (!overwrite && d.hasOwnProperty(urlObj.search)) {
-          console.log(`${chalk.yellow('⚠')} 已存在相同的路径 ${chalk.gray(urlObj.pathname + urlObj.search)}`);
+          console.log(`${chalk.yellow(logSymbols.warning)} 已存在相同的路径 ${chalk.gray(urlObj.pathname + urlObj.search)}`);
           return;
         }
 

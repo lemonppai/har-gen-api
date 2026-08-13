@@ -75,7 +75,7 @@ export const mockServer = ({
           }
         });
 
-        console.log(`${chalk.cyan.bold('[har-gen-api]')} ✨ ${chalk.green('Mock server is running...')}`);
+        console.log(`${chalk.cyan.bold('[har-gen-api]')} ${chalk.green('Mock server is running...')}`);
       }
     },
   };
