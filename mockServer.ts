@@ -36,7 +36,7 @@ export const mockServer = ({
               res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
               try {
-                let data: any = JSON5.parse(fileData.toString());
+                let data: Record<string, any> = JSON5.parse(fileData.toString());
                 const keys = Object.keys(data).filter(key => key.startsWith('?') || key === '');
 
                 keys.sort((a, b) => {
@@ -47,13 +47,13 @@ export const mockServer = ({
 
                 if (_.isString(data)) {
                   // 模板解析
-                  data = _.template(data)({
+                  const dataStr: string = _.template(data)({
                     headers: req.headers,
                     query: req.query,
                     body: req.body,
                   });
 
-                  data = JSON.parse(data || null);
+                  data = dataStr ? JSON.parse(dataStr) : null;
                 }
 
                 data = Mock.mock(data);
