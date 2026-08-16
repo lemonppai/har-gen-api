@@ -79,7 +79,7 @@ const generate = async (): Promise<void> => {
     {
       type: 'confirm',
       name: 'overwrite',
-      message: '是否覆盖已存在的文件',
+      message: '是否覆盖相同的请求参数接口',
       default: false
     },
   ]);
