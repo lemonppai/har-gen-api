@@ -166,6 +166,15 @@ const processHarFile = (filePath: string, output: string, baseURL: string, overw
 
 export { generate };
 
+process.on('uncaughtException', (error) => {
+  if (error instanceof Error && error.name === 'ExitPromptError') {
+    console.log(`${chalk.yellow(logSymbols.warning)} 退出程序`);
+  } else {
+    // Rethrow unknown errors
+    throw error;
+  }
+});
+
 // 判断是否为主模块
 if (process.argv[1] && import.meta.filename === process.argv[1]) {
   generate();
