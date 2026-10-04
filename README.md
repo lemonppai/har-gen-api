@@ -1,7 +1,7 @@
 # har-gen-api
 
 一款基于浏览器 `.har` 文件自动生成前端 Mock 接口文件的工具。
-提供 **Vite 插件** 与 **CLI 命令**，帮助你在开发过程中快速搭建本地 Mock 服务，无需手动编写重复的接口数据。
+提供 **Vite 插件**、**Webpack 插件（兼容 Vue CLI 4.0+）** 与 **CLI 命令**，帮助你在开发过程中快速搭建本地 Mock 服务，无需手动编写重复的接口数据。
 
 ---
 
@@ -10,7 +10,8 @@
 - 🚀 从 Chrome DevTools 导出的 `.har` 文件中一键提取请求/响应数据
 - 📦 自动生成 Mock 接口文件，文件所在路径是接口路径和请求方式组合
 - ⚡ 内置 Vite 插件，开发环境下实时拦截请求并返回 Mock 数据
-- 🧩 支持自定义 `baseURL`、输出目录、是否覆盖相同的请求参数接口
+- 🧩 内置 Webpack 插件，兼容 **Vue CLI 4.0+**（webpack-dev-server 3 / 4 / 5）
+- 🔧 支持自定义 `baseURL`、输出目录、是否覆盖相同的请求参数接口
 - 🔍 Debug 模式可打印接口调用日志，方便调试
 
 ---
@@ -92,6 +93,63 @@ export default defineConfig({
 | `baseURL` | `string`  | `'/api'` | 需要 Mock 的接口基础路径                     |
 | `enabled` | `boolean` | `true`   | 是否启用 Mock 服务                           |
 | `debug`   | `boolean` | `false`  | 开启后控制台会打印每个被拦截的请求方法和路径 |
+
+### 4️⃣ 集成到 Webpack / Vue CLI 4.0+ 项目
+
+支持 **Vue CLI 4.0 ~ 5.x**（即 webpack-dev-server 3 / 4 / 5 全系列），无需修改任何构建配置。
+
+#### Vue CLI 项目（vue.config.js）
+
+```js
+// vue.config.js
+const { mockServer } = require('har-gen-api/webpack')
+
+module.exports = {
+  configureWebpack: {
+    plugins: [
+      mockServer({
+        include: 'mock',           // 扫描的目录，存放生成的接口文件
+        baseURL: '/api',           // 需要拦截的接口前缀
+        enabled: true,             // 是否启用 Mock 服务
+        debug: true                // 是否打印请求日志
+      })
+    ]
+  }
+}
+```
+
+Vue CLI 5 / ESM 项目同样支持 import 语法：
+
+```js
+import { mockServer } from 'har-gen-api/webpack'
+```
+
+#### 原生 Webpack 项目
+
+```js
+// webpack.config.js
+const { mockServer } = require('har-gen-api/webpack')
+
+module.exports = {
+  // ...
+  plugins: [
+    mockServer({ include: 'mock', baseURL: '/api', enabled: true, debug: true })
+  ]
+}
+```
+
+#### 版本兼容说明
+
+插件在 `compiler.hooks.afterEnvironment` 阶段自适应注入中间件，两种注册方式自动切换：
+
+| 构建环境 | webpack-dev-server | 注入方式 |
+| -------- | ------------------ | -------- |
+| Vue CLI 4.0 ~ 4.5（webpack 4） | wds 3 | `devServer.before` |
+| Vue CLI 4.5 + webpack 5 / Vue CLI 5 | wds 4+ | `devServer.setupMiddlewares` |
+
+> 💡 Mock 中间件会被插入到中间件链**最前面**，优先于 `historyApiFallback`、`proxy` 等内置中间件，因此不会被 SPA 路由回退吞掉。
+>
+> 💡 中间件采用 `unshift` / 包装回调的方式注入，**不会覆盖你已有的 `devServer.before` 或 `setupMiddlewares` 配置**。
 
 ---
 

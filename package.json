@@ -1,11 +1,12 @@
 {
   "name": "har-gen-api",
   "type": "module",
-  "version": "0.3.2",
+  "version": "0.3.5",
   "license": "MIT",
   "scripts": {
     "start": "node bin/cli.js",
-    "build": "esbuild index.ts --format=esm --outfile=dist/index.js && esbuild mockServer.ts --format=esm --outfile=dist/mockServer.mjs && esbuild mockServer.ts --format=cjs --outfile=dist/mockServer.cjs"
+    "build": "node scripts/build.mjs",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -13,19 +14,27 @@
   },
   "files": [
     "dist",
-    "mockServer.d.ts"
+    "mockServer.d.ts",
+    "mockServer.webpack.d.ts"
   ],
   "keywords": [
     "har",
     "mock",
     "api",
-    "vite"
+    "vite",
+    "webpack",
+    "vue-cli"
   ],
   "exports": {
     "./vite": {
       "types": "./mockServer.d.ts",
       "import": "./dist/mockServer.mjs",
       "require": "./dist/mockServer.cjs"
+    },
+    "./webpack": {
+      "types": "./mockServer.webpack.d.ts",
+      "import": "./dist/mockServer.webpack.mjs",
+      "require": "./dist/mockServer.webpack.cjs"
     }
   },
   "bin": {
