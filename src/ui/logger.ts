@@ -45,3 +45,26 @@ export const logger = {
   /** 路径着色 */
   path: (message: string): string => chalk.cyan(message),
 };
+
+/** 单行进度渲染（仅在 TTY 下重绘，避免污染日志与管道输出） */
+export function createProgressRenderer(): {
+  update: (text: string) => void;
+  done: () => void;
+} {
+  const enabled = Boolean(process.stderr.isTTY);
+  let lastLength = 0;
+
+  return {
+    update(text: string): void {
+      if (!enabled) return;
+      const line = text.length > 110 ? `${text.slice(0, 107)}...` : text;
+      process.stderr.write(`\r${' '.repeat(lastLength)}\r${line}`);
+      lastLength = line.length;
+    },
+    done(): void {
+      if (!enabled || lastLength === 0) return;
+      process.stderr.write(`\r${' '.repeat(lastLength)}\r`);
+      lastLength = 0;
+    },
+  };
+}

@@ -15,8 +15,10 @@ if (!fs.existsSync(entry)) {
 
 cfonts.say('Har Gen Api', {
   font: 'simple',
+  colors: ['#00C2A8'],
   space: false,
 });
+console.log('\x1b[2m  HAR → 前端 Mock 接口文件生成器\x1b[0m\n');
 
 /**
  * 处理异常并设置退出码。

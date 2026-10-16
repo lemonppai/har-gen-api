@@ -8,11 +8,42 @@ export const validateOutput = (value: string): true | string =>
 export const validateBaseURL = (value: string): true | string =>
   /^\/[^\0]+$/.test(value.trim()) ? true : '格式不正确，需以 / 开头';
 
+/** 单选项 */
+export interface Choice<T> {
+  name: string;
+  value: T;
+}
+
+export type ChoiceOrSeparator<T> = Choice<T> | InstanceType<typeof inquirer.Separator>;
+
+/** 菜单分隔线 */
+export const separator = (): InstanceType<typeof inquirer.Separator> => new inquirer.Separator();
+
+/** 单选菜单 */
+export const askSelect = async <T>(options: {
+  message: string;
+  choices: ChoiceOrSeparator<T>[];
+  pageSize?: number;
+}): Promise<T> => {
+  const answers = await inquirer.prompt<{ value: T }>([
+    {
+      type: 'select',
+      name: 'value',
+      message: options.message,
+      choices: options.choices,
+      pageSize: options.pageSize ?? 15,
+      loop: false,
+    },
+  ]);
+
+  return answers.value;
+};
+
 /** 文本输入，返回去除首尾空格后的值 */
 export const askInput = async (
   message: string,
-  defaultValue: string,
-  validate: (value: string) => true | string
+  defaultValue = '',
+  validate?: (value: string) => true | string
 ): Promise<string> => {
   const answers = await inquirer.prompt<{ value: string }>([
     { type: 'input', name: 'value', message, default: defaultValue, validate },

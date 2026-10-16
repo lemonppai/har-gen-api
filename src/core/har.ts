@@ -165,7 +165,7 @@ export const mergeMockFile = (
 };
 
 /** 递归收集目录下的所有 HAR 文件（仅一层，与历史行为一致） */
-const collectHarFiles = (target: string): string[] => {
+export const collectHarFiles = (target: string): string[] => {
   if (!fs.existsSync(target)) {
     throw new Error(`文件或目录不存在：${target}`);
   }
@@ -178,6 +178,40 @@ const collectHarFiles = (target: string): string[] => {
     .readdirSync(target)
     .filter(file => file.endsWith('.har'))
     .map(file => path.join(target, file));
+};
+
+/** 单个 HAR 文件的预览信息 */
+export interface HarFilePreview {
+  /** 文件绝对路径 */
+  file: string;
+  /** 文件字节数 */
+  size: number;
+  /** 按 baseURL 匹配到的可生成接口数 */
+  entries: number;
+  /** 解析失败时的原因 */
+  error?: string;
+}
+
+/**
+ * 预扫描 HAR 文件（不写任何文件），供生成前展示计划与二次确认。
+ */
+export const previewHarFiles = (input: string, baseURL?: string): HarFilePreview[] => {
+  const files = collectHarFiles(input);
+
+  return files.map((file) => {
+    const content = fs.readFileSync(file, 'utf8');
+
+    try {
+      return {
+        file,
+        size: Buffer.byteLength(content),
+        entries: extractHarEntries(content, baseURL ?? '/api').length,
+      };
+    }
+    catch (error) {
+      return { file, size: Buffer.byteLength(content), entries: 0, error: (error as Error).message };
+    }
+  });
 };
 
 /**

@@ -18,6 +18,7 @@ import {
   matchBaseURL,
   mergeMockFile,
   parseArgs,
+  previewHarFiles,
   stripBaseURL,
 } from '../dist/index.js';
 import { mockServer as viteMockServer } from '../dist/vite.mjs';
@@ -184,6 +185,21 @@ async function main() {
   await test('非法 HAR 抛出可读错误', () => {
     assert.throws(() => extractHarEntries('{}', '/api'), /log\.entries/);
     assert.throws(() => extractHarEntries('{ oops', '/api'), /合法的 JSON/);
+  });
+
+  await test('previewHarFiles 预扫描不写文件且统计接口数', () => {
+    const previews = previewHarFiles(HAR_DIR, '/api');
+    assert.ok(previews.length >= 1);
+    for (const item of previews) {
+      assert.ok(item.file.endsWith('.har'));
+      assert.ok(item.size > 0);
+      assert.equal(typeof item.entries, 'number');
+      assert.ok(item.file.startsWith(fs.realpathSync(HAR_DIR)) || item.file.startsWith(HAR_DIR));
+    }
+    assert.ok(
+      previews.some(item => item.entries > 0),
+      '至少一个 fixture 文件应解析出接口',
+    );
   });
 
   // ------------------------------------------------------------------ 文件合并
@@ -506,16 +522,29 @@ async function main() {
     assert.match(result.stderr, /未知参数/);
   });
 
-  await testProcess('bin/cli.js 非 TTY 下被中断时退出码为 0 且无告警', async () => {
+  await testProcess('bin/cli.js 非 TTY 下未提供的选项自动用默认值并完成生成', async () => {
     const result = spawnSync(
       process.execPath,
       [ path.join(ROOT, 'bin', 'cli.js'), '-i', path.join(HAR_DIR, 'full.har'), '-o', 'tmp/notty-out' ],
-      { encoding: 'utf8', cwd: ROOT, input: '\n\n\n' }
+      { encoding: 'utf8', cwd: ROOT, input: '' }
     );
 
     assert.equal(result.status, 0, result.stderr);
     assert.doesNotMatch(result.stderr, /unsettled top-level await/);
-    assert.match(result.stdout, /已取消操作/);
+    assert.match(result.stdout, /生成完成/);
+    assert.match(result.stdout, /生成了 \d+ 条/);
+    assert.ok(fs.existsSync(path.join(ROOT, 'tmp', 'notty-out')), '应已生成 mock 目录');
+  });
+
+  await testProcess('bin/cli.js 非 TTY 且缺少 -i 时退出码为 1 并给出参数提示', async () => {
+    const result = spawnSync(
+      process.execPath,
+      [ path.join(ROOT, 'bin', 'cli.js') ],
+      { encoding: 'utf8', cwd: ROOT, input: '' }
+    );
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /-i/);
   });
 
   // ------------------------------------------------------------------ 汇总

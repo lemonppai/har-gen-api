@@ -1,6 +1,6 @@
 {
   "name": "har-gen-api",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "从浏览器 HAR 文件自动生成前端 Mock 接口文件，内置 Vite 插件、Webpack 插件（兼容 Vue CLI 4.0+）与 CLI",
   "type": "module",
   "license": "MIT",
