@@ -1,11 +1,20 @@
 {
   "name": "har-gen-api",
+  "version": "0.4.2",
+  "description": "从浏览器 HAR 文件自动生成前端 Mock 接口文件，内置 Vite 插件、Webpack 插件（兼容 Vue CLI 4.0+）与 CLI",
   "type": "module",
-  "version": "0.3.5",
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=18.18"
+  },
   "scripts": {
     "start": "node bin/cli.js",
     "build": "node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "fixtures": "node tests/make-fixtures.mjs",
+    "test": "node tests/run.mjs",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -14,8 +23,8 @@
   },
   "files": [
     "dist",
-    "mockServer.d.ts",
-    "mockServer.webpack.d.ts"
+    "bin",
+    "README.md"
   ],
   "keywords": [
     "har",
@@ -23,27 +32,29 @@
     "api",
     "vite",
     "webpack",
-    "vue-cli"
+    "vue-cli",
+    "mockjs"
   ],
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
     "./vite": {
-      "types": "./mockServer.d.ts",
-      "import": "./dist/mockServer.mjs",
-      "require": "./dist/mockServer.cjs"
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs"
     },
     "./webpack": {
-      "types": "./mockServer.webpack.d.ts",
-      "import": "./dist/mockServer.webpack.mjs",
-      "require": "./dist/mockServer.webpack.cjs"
+      "types": "./dist/webpack.d.ts",
+      "import": "./dist/webpack.mjs",
+      "require": "./dist/webpack.cjs"
     }
   },
   "bin": {
     "har-gen-api": "bin/cli.js"
   },
   "dependencies": {
-    "@types/lodash": "^4.17.25",
-    "@types/mockjs": "^1.0.10",
-    "@types/node": "^26.2.0",
     "cfonts": "^3.3.1",
     "chalk": "^5.6.2",
     "inquirer": "^14.0.2",
@@ -53,6 +64,10 @@
     "mockjs": "^1.1.0"
   },
   "devDependencies": {
-    "esbuild": "^0.28.1"
+    "@types/lodash": "^4.17.25",
+    "@types/mockjs": "^1.0.10",
+    "@types/node": "^26.2.0",
+    "esbuild": "^0.28.1",
+    "typescript": "5.7.3"
   }
 }
